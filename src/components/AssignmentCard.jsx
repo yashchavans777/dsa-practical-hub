@@ -17,9 +17,9 @@ export default function AssignmentCard({ assignment, onSelect }) {
             <span className="text-xs font-mono font-bold text-slate-400 dark:text-slate-500">
               #{assignment.id.toString().padStart(2, '0')}
             </span>
-            <span className="inline-flex items-center text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60">
+            <span className="inline-flex items-center text-[11px] font-mono font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60">
               <Tag className="w-3 h-3 mr-1 text-slate-400" />
-              {assignment.topic}
+              {assignment.fileName || assignment.topic}
             </span>
           </div>
 

@@ -1,43 +1,20 @@
 export const CATEGORIES = [
   'All',
-  ...Array.from(new Set([
-    "Linear Search + dynamic memory",
-    "Binary Search",
-    "Bubble Sort (by CGPA)",
-    "Binary Search (found / not found)",
-    "Stack using linked list",
-    "Infix to Postfix (array stack)",
-    "Infix to Prefix (array stack)",
-    "Circular Queue (size 5)",
-    "BST insert + traversals",
-    "BST insert + search",
-    "BST deletion",
-    "BST depth + leaf nodes",
-    "Kruskal's MST (adjacency list)",
-    "Prim's MST (adjacency matrix)",
-    "Heap Sort",
-    "Merge Sort (delivery times)",
-    "Fractional Knapsack",
-    "Naive String Matching",
-    "BFS shortest path in maze",
-    "A* search in maze"
-  ]))
+  'Part A (C++)',
+  'Part B (Python)'
 ];
 
 export const assignments = [
   {
     id: 1,
     questionNo: "Question 1",
-    fileName: "01_LinearSearch.cpp",
-    title: "Linear Search + Dynamic Memory",
-    topic: "Linear Search + dynamic memory",
+    title: "Student database with dynamic memory and Linear Search (C++)",
     language: "cpp",
-    level: "Easy",
-    timeComplexity: "O(n)",
-    keyConcepts: "Arrays of structs, new/delete, sequential scan",
-    question: "Create a student database containing Student ID, Name, and CGPA. Allocate memory dynamically, add student records, and search for a student using ID with Linear Search.",
+    fileName: "01_LinearSearch.cpp",
+    question: "Create a student database containing Student ID, Name, and CGPA using dynamic memory allocation. Take input for n students and search for a student by ID using Linear Search.",
     code: `#include <iostream>
 #include <string>
+#include <limits>
 using namespace std;
 
 struct Student {
@@ -50,22 +27,30 @@ int main() {
     int n;
     cout << "Number of students: ";
     cin >> n;
-    Student* students = new Student[n];
-    for (int i = 0; i < n; i++) {
-        cout << "Enter ID, name and CGPA: ";
+
+    Student* students = new Student[n]; // dynamic allocation
+    for (int i = 0; i < n; ++i) {
+        cout << "ID, name, CGPA for student " << i + 1 << ": ";
         cin >> students[i].id >> students[i].name >> students[i].cgpa;
     }
-    int key;
+
+    int target;
     cout << "Enter ID to search: ";
-    cin >> key;
-    int i;
-    for (i = 0; i < n; i++) {
-        if (students[i].id == key) {
-            cout << "Found: " << students[i].id << " " << students[i].name << " " << students[i].cgpa << "\\n";
+    cin >> target;
+
+    int found = -1;
+    for (int i = 0; i < n; ++i) {
+        if (students[i].id == target) {
+            found = i;
             break;
         }
     }
-    if (i == n) cout << "Student not found\\n";
+
+    if (found == -1) cout << "Student not found\\n";
+    else cout << "Found: " << students[found].id << " "
+              << students[found].name << " "
+              << students[found].cgpa << '\\n';
+
     delete[] students;
     return 0;
 }`
@@ -73,68 +58,54 @@ int main() {
   {
     id: 2,
     questionNo: "Question 2",
-    fileName: "02_BinarySearch.cpp",
-    title: "Binary Search on Student IDs",
-    topic: "Binary Search",
+    title: "Sort student IDs and Binary Search (C++)",
     language: "cpp",
-    level: "Easy",
-    timeComplexity: "O(log n) search",
-    keyConcepts: "Sort first, then halve the search range",
-    question: "Store student IDs in an array, sort them in ascending order, and implement Binary Search to find a given student ID.",
+    fileName: "02_BinarySearch.cpp",
+    question: "Accept n student IDs dynamically, sort them in ascending order using std::sort, and implement Binary Search to locate a target student ID.",
     code: `#include <iostream>
+#include <algorithm>
 using namespace std;
 
 int main() {
-    int n, searchID, temp;
-    int ids[50];
-    cout << "Enter number of student IDs: ";
+    int n;
+    cout << "Number of student IDs: ";
     cin >> n;
-    cout << "Enter student IDs: ";
-    for (int i = 0; i < n; i++)
-        cin >> ids[i];
 
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (ids[i] > ids[j]) {
-                temp = ids[i];
-                ids[i] = ids[j];
-                ids[j] = temp;
-            }
-        }
-    }
+    int* ids = new int[n];
+    for (int i = 0; i < n; ++i) cin >> ids[i];
+
+    sort(ids, ids + n);
 
     cout << "Sorted IDs: ";
-    for (int i = 0; i < n; i++)
-        cout << ids[i] << " ";
-    cout << "\\nEnter ID to search: ";
-    cin >> searchID;
+    for (int i = 0; i < n; ++i) cout << ids[i] << " ";
+    cout << '\\n';
 
-    int low = 0, high = n - 1;
-    while (low <= high) {
-        int mid = (low + high) / 2;
-        if (ids[mid] == searchID) {
-            cout << "ID found at index " << mid;
-            return 0;
-        } else if (searchID < ids[mid])
-            high = mid - 1;
-        else
-            low = mid + 1;
+    int key;
+    cout << "ID to search: ";
+    cin >> key;
+
+    int left = 0, right = n - 1, result = -1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (ids[mid] == key) { result = mid; break; }
+        if (ids[mid] < key) left = mid + 1;
+        else right = mid - 1;
     }
-    cout << "ID not found";
+
+    if (result == -1) cout << "ID not found\\n";
+    else cout << "ID found at sorted index " << result << '\\n';
+
+    delete[] ids;
     return 0;
 }`
   },
   {
     id: 3,
     questionNo: "Question 3",
-    fileName: "03_BubbleSort.cpp",
-    title: "Bubble Sort by CGPA",
-    topic: "Bubble Sort (by CGPA)",
+    title: "Sort student records by CGPA using Bubble Sort (C++)",
     language: "cpp",
-    level: "Easy",
-    timeComplexity: "O(n^2)",
-    keyConcepts: "Adjacent swaps, sorting structs by a field",
-    question: "Store student ID, name, and CGPA. Implement Bubble Sort or Selection Sort to arrange records by CGPA in ascending order.",
+    fileName: "03_BubbleSort.cpp",
+    question: "Store student records (ID, name, CGPA) in a dynamically allocated array and sort the records in ascending order of CGPA using Bubble Sort.",
     code: `#include <iostream>
 #include <string>
 using namespace std;
@@ -147,337 +118,306 @@ struct Student {
 
 int main() {
     int n;
-    Student s[100];
     cout << "Number of students: ";
     cin >> n;
-    for (int i = 0; i < n; i++) {
-        cout << "Enter ID, name and CGPA: ";
+
+    Student* s = new Student[n];
+    for (int i = 0; i < n; ++i) {
+        cout << "Enter ID, name, CGPA: ";
         cin >> s[i].id >> s[i].name >> s[i].cgpa;
     }
 
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
+    for (int i = 0; i < n - 1; ++i) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; ++j) {
             if (s[j].cgpa > s[j + 1].cgpa) {
                 Student temp = s[j];
                 s[j] = s[j + 1];
                 s[j + 1] = temp;
+                swapped = true;
             }
         }
+        if (!swapped) break;
     }
 
-    cout << "Records by CGPA (ascending):\\n";
-    for (int i = 0; i < n; i++)
-        cout << s[i].id << " " << s[i].name << " " << s[i].cgpa << "\\n";
+    cout << "Students sorted by CGPA (ascending):\\n";
+    for (int i = 0; i < n; ++i)
+        cout << s[i].id << " " << s[i].name << " " << s[i].cgpa << '\\n';
+
+    delete[] s;
     return 0;
 }`
   },
   {
     id: 4,
     questionNo: "Question 4",
-    fileName: "04_BinarySearch.cpp",
-    title: "Binary Search (Found / Not Found)",
-    topic: "Binary Search (found / not found)",
+    title: "Student ID Binary Search (duplicate of Problem 2 in the handout)",
     language: "cpp",
-    level: "Easy",
-    timeComplexity: "O(log n) search",
-    keyConcepts: "Same as Q2, sorted array required",
-    question: "Store student IDs in an array, sort them in ascending order, and implement Binary Search to find a given student ID.",
-    code: `#include <iostream>
+    fileName: "04_BinarySearchSorted.cpp",
+    question: "Implement a standalone binary search algorithm on an already sorted array of student IDs to find the index of a target ID.",
+    code: `// Problem 4 repeats Problem 2 in the supplied practical list.
+// This standalone version uses binary search on an already sorted array.
+#include <iostream>
 using namespace std;
 
 int main() {
-    int n, searchID, temp;
-    int ids[50];
-    cout << "Enter number of student IDs: ";
+    int n;
+    cout << "Enter number of sorted IDs: ";
     cin >> n;
-    cout << "Enter student IDs: ";
-    for (int i = 0; i < n; i++)
-        cin >> ids[i];
 
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (ids[i] > ids[j]) {
-                temp = ids[i];
-                ids[i] = ids[j];
-                ids[j] = temp;
-            }
-        }
+    int* ids = new int[n];
+    cout << "Enter IDs in ascending order: ";
+    for (int i = 0; i < n; ++i) cin >> ids[i];
+
+    int key;
+    cout << "ID to find: ";
+    cin >> key;
+
+    int lo = 0, hi = n - 1, pos = -1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (ids[mid] == key) { pos = mid; break; }
+        if (ids[mid] < key) lo = mid + 1;
+        else hi = mid - 1;
     }
 
-    cout << "Sorted IDs: ";
-    for (int i = 0; i < n; i++)
-        cout << ids[i] << " ";
-    cout << "\\nEnter ID to search: ";
-    cin >> searchID;
+    if (pos == -1) cout << "Not found\\n";
+    else cout << "Found at index " << pos << '\\n';
 
-    int low = 0, high = n - 1;
-    while (low <= high) {
-        int mid = (low + high) / 2;
-        if (ids[mid] == searchID) {
-            cout << "ID found at index " << mid;
-            return 0;
-        } else if (searchID < ids[mid])
-            high = mid - 1;
-        else
-            low = mid + 1;
-    }
-    cout << "ID not found";
+    delete[] ids;
     return 0;
 }`
   },
   {
     id: 5,
     questionNo: "Question 5",
-    fileName: "05_StackLinkedList.cpp",
-    title: "Stack using Singly Linked List",
-    topic: "Stack using linked list",
+    title: "Stack ADT using singly linked list (C++)",
     language: "cpp",
-    level: "Easy",
-    timeComplexity: "O(1) per op",
-    keyConcepts: "push, pop, display, underflow check",
-    question: "Implement a Stack ADT using a singly linked list with push, pop, and display operations. Handle stack underflow.",
+    fileName: "05_StackLinkedList.cpp",
+    question: "Implement a Stack Abstract Data Type (ADT) using a singly linked list with push, pop, display, and empty checking operations.",
     code: `#include <iostream>
 using namespace std;
 
 struct Node {
     int data;
     Node* next;
+    Node(int value) : data(value), next(nullptr) {}
 };
 
-Node* topNode = nullptr;
+class Stack {
+    Node* topNode;
+public:
+    Stack() : topNode(nullptr) {}
 
-void push(int x) {
-    Node* p = new Node{x, topNode};
-    topNode = p;
-}
+    bool empty() const { return topNode == nullptr; }
 
-void pop() {
-    if (topNode == nullptr) {
-        cout << "Stack underflow\\n";
-        return;
+    void push(int value) {
+        Node* node = new Node(value);
+        node->next = topNode;
+        topNode = node;
+        cout << "Pushed " << value << '\\n';
     }
-    cout << "Popped: " << topNode->data << "\\n";
-    Node* temp = topNode;
-    topNode = topNode->next;
-    delete temp;
-}
 
-void display() {
-    if (topNode == nullptr) {
-        cout << "Stack is empty\\n";
-        return;
+    void pop() {
+        if (empty()) { cout << "Stack underflow\\n"; return; }
+        Node* temp = topNode;
+        cout << "Popped " << temp->data << '\\n';
+        topNode = topNode->next;
+        delete temp;
     }
-    cout << "Stack: ";
-    for (Node* p = topNode; p != nullptr; p = p->next)
-        cout << p->data << " ";
-    cout << "\\n";
-}
+
+    void display() const {
+        if (empty()) { cout << "Stack is empty\\n"; return; }
+        cout << "Top -> ";
+        for (Node* p = topNode; p != nullptr; p = p->next)
+            cout << p->data << " -> ";
+        cout << "NULL\\n";
+    }
+
+    ~Stack() {
+        while (topNode != nullptr) {
+            Node* temp = topNode;
+            topNode = topNode->next;
+            delete temp;
+        }
+    }
+};
 
 int main() {
-    int choice, x;
+    Stack st;
+    int choice, value;
     do {
-        cout << "1.Push 2.Pop 3.Display 0.Exit: ";
+        cout << "\\n1.Push 2.Pop 3.Display 0.Exit: ";
         cin >> choice;
-        if (choice == 1) { cout << "Value: "; cin >> x; push(x); }
-        else if (choice == 2) pop();
-        else if (choice == 3) display();
+        if (choice == 1) { cout << "Value: "; cin >> value; st.push(value); }
+        else if (choice == 2) st.pop();
+        else if (choice == 3) st.display();
     } while (choice != 0);
-
-    while (topNode != nullptr) pop();
     return 0;
 }`
   },
   {
     id: 6,
     questionNo: "Question 6",
-    fileName: "06_InfixToPostfix.cpp",
-    title: "Infix to Postfix Conversion",
-    topic: "Infix to Postfix (array stack)",
+    title: "Convert infix expression to postfix (C++)",
     language: "cpp",
-    level: "Medium",
-    timeComplexity: "O(n)",
-    keyConcepts: "Operator precedence, parentheses handling",
-    question: "Implement a stack using an array and convert a valid infix expression into postfix notation, considering operator precedence and parentheses.",
+    fileName: "06_InfixToPostfix.cpp",
+    question: "Convert an infix expression containing single-letter or digit operands and operators (^, *, /, %, +, -) to its equivalent postfix expression using a stack.",
     code: `#include <iostream>
+#include <stack>
 #include <string>
 #include <cctype>
 using namespace std;
 
-char st[100];
-int top = -1;
-
-int precedence(char c) {
-    if (c == '^') return 3;
-    if (c == '*' || c == '/') return 2;
-    if (c == '+' || c == '-') return 1;
+int precedence(char op) {
+    if (op == '^') return 3;
+    if (op == '*' || op == '/' || op == '%') return 2;
+    if (op == '+' || op == '-') return 1;
     return 0;
 }
 
+bool rightAssociative(char op) { return op == '^'; }
+
 int main() {
     string infix, postfix;
-    cout << "Enter infix expression: ";
+    cout << "Enter infix expression (single-letter/digit operands): ";
     cin >> infix;
+    stack<char> ops;
 
     for (char c : infix) {
-        if (isalnum(c))
-            postfix += c;
-        else if (c == '(')
-            st[++top] = c;
+        if (isalnum(static_cast<unsigned char>(c))) postfix += c;
+        else if (c == '(') ops.push(c);
         else if (c == ')') {
-            while (top >= 0 && st[top] != '(')
-                postfix += st[top--];
-            if (top >= 0)
-                top--;
+            while (!ops.empty() && ops.top() != '(') {
+                postfix += ops.top(); ops.pop();
+            }
+            if (!ops.empty()) ops.pop();
         } else {
-            while (top >= 0 && st[top] != '(' &&
-                   (precedence(st[top]) > precedence(c) ||
-                   (precedence(st[top]) == precedence(c) && c != '^')))
-                postfix += st[top--];
-            st[++top] = c;
+            while (!ops.empty() && ops.top() != '(' &&
+                   (precedence(ops.top()) > precedence(c) ||
+                   (precedence(ops.top()) == precedence(c) && !rightAssociative(c)))) {
+                postfix += ops.top(); ops.pop();
+            }
+            ops.push(c);
         }
     }
-    while (top >= 0)
-        postfix += st[top--];
-
-    cout << "Postfix expression: " << postfix;
+    while (!ops.empty()) {
+        if (ops.top() != '(') postfix += ops.top();
+        ops.pop();
+    }
+    cout << "Postfix: " << postfix << '\\n';
     return 0;
 }`
   },
   {
     id: 7,
     questionNo: "Question 7",
-    fileName: "07_InfixToPrefix.cpp",
-    title: "Infix to Prefix Conversion",
-    topic: "Infix to Prefix (array stack)",
+    title: "Convert infix expression to prefix (C++)",
     language: "cpp",
-    level: "Medium",
-    timeComplexity: "O(n)",
-    keyConcepts: "Reverse, swap brackets, postfix, reverse again",
-    question: "Implement a stack using an array and convert a valid infix expression into prefix notation.",
+    fileName: "07_InfixToPrefix.cpp",
+    question: "Convert an infix expression containing single-character operands to prefix notation using a stack by reversing the expression, swapping parentheses, generating postfix, and reversing the result.",
     code: `#include <iostream>
+#include <stack>
 #include <string>
+#include <algorithm>
 #include <cctype>
 using namespace std;
 
-char stackArray[100];
-int top = -1;
-
-void push(char ch) {
-    stackArray[++top] = ch;
-}
-
-char pop() {
-    return stackArray[top--];
-}
-
-int precedence(char op) {
-    if (op == '^') return 3;
-    if (op == '*' || op == '/') return 2;
-    if (op == '+' || op == '-') return 1;
+int prec(char c) {
+    if (c == '^') return 3;
+    if (c == '*' || c == '/' || c == '%') return 2;
+    if (c == '+' || c == '-') return 1;
     return 0;
 }
 
+// This version supports single-character operands and valid expressions.
+// Reverse the expression, swap parentheses, make postfix, then reverse it.
 int main() {
-    string infix, reversed, postfix, prefix;
-    cout << "Enter infix expression: ";
+    string infix;
+    cout << "Enter infix expression (single-letter/digit operands): ";
     cin >> infix;
 
-    for (int i = (int)infix.length() - 1; i >= 0; i--)
-        reversed += infix[i];
-
-    for (int i = 0; i < (int)reversed.length(); i++) {
-        if (reversed[i] == '(')
-            reversed[i] = ')';
-        else if (reversed[i] == ')')
-            reversed[i] = '(';
+    reverse(infix.begin(), infix.end());
+    for (char &c : infix) {
+        if (c == '(') c = ')';
+        else if (c == ')') c = '(';
     }
 
-    for (char ch : reversed) {
-        if (isalnum((unsigned char)ch))
-            postfix += ch;
-        else if (ch == '(')
-            push(ch);
-        else if (ch == ')') {
-            while (top != -1 && stackArray[top] != '(')
-                postfix += pop();
-            if (top != -1)
-                pop();
+    string postfix;
+    stack<char> ops;
+
+    for (char c : infix) {
+        if (isalnum(static_cast<unsigned char>(c))) postfix += c;
+        else if (c == '(') ops.push(c);
+        else if (c == ')') {
+            while (!ops.empty() && ops.top() != '(') {
+                postfix += ops.top(); ops.pop();
+            }
+            if (!ops.empty()) ops.pop();
         } else {
-            while (top != -1 && stackArray[top] != '(' &&
-                   (precedence(stackArray[top]) > precedence(ch) ||
-                   (precedence(stackArray[top]) == precedence(ch) && ch == '^')))
-                postfix += pop();
-            push(ch);
+            while (!ops.empty() && ops.top() != '(' &&
+                   (prec(ops.top()) > prec(c) ||
+                   (prec(ops.top()) == prec(c) && c == '^'))) {
+                postfix += ops.top(); ops.pop();
+            }
+            ops.push(c);
         }
     }
-
-    while (top != -1)
-        postfix += pop();
-
-    for (int i = (int)postfix.length() - 1; i >= 0; i--)
-        prefix += postfix[i];
-
-    cout << "Prefix expression: " << prefix;
+    while (!ops.empty()) { postfix += ops.top(); ops.pop(); }
+    reverse(postfix.begin(), postfix.end());
+    cout << "Prefix: " << postfix << '\\n';
     return 0;
 }`
   },
   {
     id: 8,
     questionNo: "Question 8",
-    fileName: "08_CircularQueue.cpp",
-    title: "Circular Queue (Size 5)",
-    topic: "Circular Queue (size 5)",
+    title: "Circular Queue using array of size 5 (C++)",
     language: "cpp",
-    level: "Medium",
-    timeComplexity: "O(1) per op",
-    keyConcepts: "Modulo indexing, full vs empty conditions",
-    question: "Implement a Circular Queue of using an array of size 5 in C++. Write a program to perform Enqueue, Dequeue, and Display operations. Handle full and empty queue conditions.",
+    fileName: "08_CircularQueue.cpp",
+    question: "Implement a Circular Queue of fixed capacity 5 using an array with enqueue, dequeue, and display operations.",
     code: `#include <iostream>
 using namespace std;
 
-const int SIZE = 5;
-int q[SIZE], front = -1, rear = -1;
+class CircularQueue {
+    static const int CAP = 5;
+    int a[CAP], front, rear, count;
+public:
+    CircularQueue() : front(0), rear(-1), count(0) {}
 
-void enqueue(int x) {
-    if ((rear + 1) % SIZE == front) {
-        cout << "Queue is full\\n";
-        return;
+    void enqueue(int x) {
+        if (count == CAP) { cout << "Queue is full\\n"; return; }
+        rear = (rear + 1) % CAP;
+        a[rear] = x;
+        ++count;
+        cout << "Inserted " << x << '\\n';
     }
-    if (front == -1) front = 0;
-    rear = (rear + 1) % SIZE;
-    q[rear] = x;
-}
 
-void dequeue() {
-    if (front == -1) {
-        cout << "Queue is empty\\n";
-        return;
+    void dequeue() {
+        if (count == 0) { cout << "Queue is empty\\n"; return; }
+        cout << "Removed " << a[front] << '\\n';
+        front = (front + 1) % CAP;
+        --count;
     }
-    cout << "Removed: " << q[front] << "\\n";
-    if (front == rear) front = rear = -1;
-    else front = (front + 1) % SIZE;
-}
 
-void display() {
-    if (front == -1) { cout << "Queue is empty\\n"; return; }
-    cout << "Queue: ";
-    int i = front;
-    while (true) {
-        cout << q[i] << " ";
-        if (i == rear) break;
-        i = (i + 1) % SIZE;
+    void display() const {
+        if (count == 0) { cout << "Queue is empty\\n"; return; }
+        cout << "Queue: ";
+        for (int i = 0; i < count; ++i)
+            cout << a[(front + i) % CAP] << " ";
+        cout << '\\n';
     }
-    cout << "\\n";
-}
+};
 
 int main() {
+    CircularQueue q;
     int choice, x;
     do {
-        cout << "1.Enqueue 2.Dequeue 3.Display 0.Exit: ";
+        cout << "\\n1.Enqueue 2.Dequeue 3.Display 0.Exit: ";
         cin >> choice;
-        if (choice == 1) { cout << "Value: "; cin >> x; enqueue(x); }
-        else if (choice == 2) dequeue();
-        else if (choice == 3) display();
+        if (choice == 1) { cout << "Value: "; cin >> x; q.enqueue(x); }
+        else if (choice == 2) q.dequeue();
+        else if (choice == 3) q.display();
     } while (choice != 0);
     return 0;
 }`
@@ -485,37 +425,35 @@ int main() {
   {
     id: 9,
     questionNo: "Question 9",
-    fileName: "09_BSTTraversal.py",
-    title: "BST Insert & Traversals",
-    topic: "BST insert + traversals",
+    title: "BST insertion and inorder/preorder/postorder traversals (Python)",
     language: "python",
-    level: "Easy",
-    timeComplexity: "O(h) insert, O(n) traversal",
-    keyConcepts: "Inorder / preorder / postorder, duplicate rule",
-    question: "Create a BST by inserting integer values. Display inorder, preorder, and postorder traversals. Handle duplicate values according to a defined rule.",
+    fileName: "09_BSTTraversals.py",
+    question: "Construct a Binary Search Tree (BST) by inserting integers (ignoring duplicates) and perform inorder, preorder, and postorder depth-first traversals.",
     code: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = self.right = None
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
 
-def insert(root, value):
+def insert(root, key):
     if root is None:
-        return Node(value)
-    if value < root.value:
-        root.left = insert(root.left, value)
-    elif value > root.value:
-        root.right = insert(root.right, value)
+        return Node(key)
+    if key < root.key:
+        root.left = insert(root.left, key)
+    elif key > root.key:
+        root.right = insert(root.right, key)
+    # Duplicate rule: ignore duplicate values.
     return root
 
 def inorder(root):
     if root:
         inorder(root.left)
-        print(root.value, end=" ")
+        print(root.key, end=" ")
         inorder(root.right)
 
 def preorder(root):
     if root:
-        print(root.value, end=" ")
+        print(root.key, end=" ")
         preorder(root.left)
         preorder(root.right)
 
@@ -523,52 +461,48 @@ def postorder(root):
     if root:
         postorder(root.left)
         postorder(root.right)
-        print(root.value, end=" ")
+        print(root.key, end=" ")
 
-values = list(map(int, input("Enter integers: ").split()))
+values = list(map(int, input("Enter integers separated by spaces: ").split()))
 root = None
 for value in values:
     root = insert(root, value)
 
-print("Inorder:", end=" "); inorder(root)
-print("\\nPreorder:", end=" "); preorder(root)
-print("\\nPostorder:", end=" "); postorder(root)
-print()`
+print("Inorder: ", end=""); inorder(root); print()
+print("Preorder: ", end=""); preorder(root); print()
+print("Postorder: ", end=""); postorder(root); print()`
   },
   {
     id: 10,
     questionNo: "Question 10",
-    fileName: "010_BSTSearch.py",
-    title: "BST Insertion & Search",
-    topic: "BST insert + search",
+    title: "BST insertion and search (Python)",
     language: "python",
-    level: "Easy",
-    timeComplexity: "O(h)",
-    keyConcepts: "Recursive search using BST property",
-    question: "Implement insertion and search operations in a BST. Display whether a given key is present.",
+    fileName: "10_BSTSearch.py",
+    question: "Construct a Binary Search Tree (BST) from user input values and implement recursive search to check whether a given key exists in the tree.",
     code: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = self.right = None
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
 
-def insert(root, value):
+def insert(root, key):
     if root is None:
-        return Node(value)
-    if value < root.value:
-        root.left = insert(root.left, value)
-    elif value > root.value:
-        root.right = insert(root.right, value)
-    return root
+        return Node(key)
+    if key < root.key:
+        root.left = insert(root.left, key)
+    elif key > root.key:
+        root.right = insert(root.right, key)
+    return root # duplicate keys are ignored
 
 def search(root, key):
-    if root is None or root.value == key:
-        return root is not None
-    if key < root.value:
+    if root is None or root.key == key:
+        return root
+    if key < root.key:
         return search(root.left, key)
     return search(root.right, key)
 
-values = list(map(int, input("Enter BST values: ").split()))
 root = None
+values = list(map(int, input("Enter BST values: ").split()))
 for value in values:
     root = insert(root, value)
 
@@ -578,223 +512,230 @@ print("Key is present" if search(root, key) else "Key is not present")`
   {
     id: 11,
     questionNo: "Question 11",
-    fileName: "011_BSTDelete.py",
-    title: "BST Deletion",
-    topic: "BST deletion",
+    title: "Delete a key from BST (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(h)",
-    keyConcepts: "Leaf, one child, two children (inorder successor)",
-    question: "Implement deletion of a specified key from a BST, handling leaf nodes, nodes with one child, and nodes with two children.",
+    fileName: "11_BSTDelete.py",
+    question: "Delete a key from a Binary Search Tree (BST) handling leaf nodes, nodes with one child, and nodes with two children using inorder successor, and display the tree using inorder traversal.",
     code: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = self.right = None
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
 
-def insert(root, value):
+def insert(root, key):
     if root is None:
-        return Node(value)
-    if value < root.value:
-        root.left = insert(root.left, value)
-    elif value > root.value:
-        root.right = insert(root.right, value)
+        return Node(key)
+    if key < root.key:
+        root.left = insert(root.left, key)
+    elif key > root.key:
+        root.right = insert(root.right, key)
     return root
+
+def min_node(node):
+    while node.left:
+        node = node.left
+    return node
 
 def delete(root, key):
     if root is None:
         return None
-    if key < root.value:
+    if key < root.key:
         root.left = delete(root.left, key)
-    elif key > root.value:
+    elif key > root.key:
         root.right = delete(root.right, key)
     else:
-        if root.left is None:
+        if root.left is None: # zero or one child
             return root.right
         if root.right is None:
             return root.left
-        successor = root.right
-        while successor.left:
-            successor = successor.left
-        root.value = successor.value
-        root.right = delete(root.right, successor.value)
+        successor = min_node(root.right) # two children
+        root.key = successor.key
+        root.right = delete(root.right, successor.key)
     return root
 
 def inorder(root):
     if root:
         inorder(root.left)
-        print(root.value, end=" ")
+        print(root.key, end=" ")
         inorder(root.right)
 
-values = list(map(int, input("Enter BST values: ").split()))
 root = None
-for value in values:
-    root = insert(root, value)
+for x in map(int, input("Enter BST values: ").split()):
+    root = insert(root, x)
 
-key = int(input("Enter key to delete: "))
+key = int(input("Key to delete: "))
 root = delete(root, key)
-print("BST after deletion:", end=" ")
+print("Inorder after deletion: ", end="")
 inorder(root)
 print()`
   },
   {
     id: 12,
     questionNo: "Question 12",
-    fileName: "012_BSTDepthLeaves.py",
-    title: "BST Depth & Leaf Nodes",
-    topic: "BST depth + leaf nodes",
+    title: "Find BST depth and display leaf nodes (Python)",
     language: "python",
-    level: "Easy",
-    timeComplexity: "O(n)",
-    keyConcepts: "Recursive height, leaf = no children",
-    question: "Find the depth of a BST and display all leaf nodes.",
+    fileName: "12_BSTDepthLeaves.py",
+    question: "Calculate the maximum depth (number of levels) of a Binary Search Tree and print all the leaf nodes.",
     code: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = self.right = None
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
 
-def insert(root, value):
+def insert(root, key):
     if root is None:
-        return Node(value)
-    if value < root.value:
-        root.left = insert(root.left, value)
-    elif value > root.value:
-        root.right = insert(root.right, value)
+        return Node(key)
+    if key < root.key:
+        root.left = insert(root.left, key)
+    elif key > root.key:
+        root.right = insert(root.right, key)
     return root
 
 def depth(root):
     if root is None:
-        return 0
+        return 0 # depth measured as number of levels; empty tree = 0
     return 1 + max(depth(root.left), depth(root.right))
 
 def leaves(root):
-    if root:
-        if root.left is None and root.right is None:
-            print(root.value, end=" ")
-        leaves(root.left)
-        leaves(root.right)
+    if root is None:
+        return
+    if root.left is None and root.right is None:
+        print(root.key, end=" ")
+        return
+    leaves(root.left)
+    leaves(root.right)
 
-values = list(map(int, input("Enter BST values: ").split()))
 root = None
-for value in values:
-    root = insert(root, value)
+for x in map(int, input("Enter BST values: ").split()):
+    root = insert(root, x)
 
 print("Depth (number of levels):", depth(root))
-print("Leaf nodes:", end=" ")
+print("Leaf nodes: ", end="")
 leaves(root)
 print()`
   },
   {
     id: 13,
     questionNo: "Question 13",
-    fileName: "013_KruskalMST.py",
-    title: "Kruskal's Minimum Spanning Tree",
-    topic: "Kruskal's MST (adjacency list)",
+    title: "Kruskal Minimum Spanning Tree using adjacency-list-style edge list (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(E log E)",
-    keyConcepts: "Sort edges, Union-Find, cycle avoidance",
-    question: "Represent a graph of your college campus using adjacency list. Implement Kruskal's algorithm to find its Minimum Spanning Tree and display selected edges and total weight.",
-    code: `def find(parent, x):
-    if parent[x] != x:
-        parent[x] = find(parent, parent[x])
-    return parent[x]
+    fileName: "13_KruskalMST.py",
+    question: "Find the Minimum Spanning Tree (MST) of an undirected weighted graph representing campus locations using Kruskal's algorithm with Disjoint Set Union (DSU).",
+    code: `# Edges are stored as (weight, source, destination), a compact representation
+# of an undirected weighted graph. Replace the sample edges with campus paths.
+def kruskal(vertices, edges):
+    parent = {v: v for v in vertices}
+    rank = {v: 0 for v in vertices}
 
-def union(parent, rank, a, b):
-    ra, rb = find(parent, a), find(parent, b)
-    if ra == rb:
-        return False
-    if rank[ra] < rank[rb]:
-        parent[ra] = rb
-    elif rank[ra] > rank[rb]:
-        parent[rb] = ra
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        if rank[ra] < rank[rb]:
+            parent[ra] = rb
+        elif rank[ra] > rank[rb]:
+            parent[rb] = ra
+        else:
+            parent[rb] = ra
+            rank[ra] += 1
+        return True
+
+    chosen, total = [], 0
+    for weight, u, v in sorted(edges):
+        if union(u, v):
+            chosen.append((u, v, weight))
+            total += weight
+            if len(chosen) == len(vertices) - 1:
+                break
+
+    if len(chosen) != len(vertices) - 1:
+        print("Graph is disconnected; no spanning tree exists.")
     else:
-        parent[rb] = ra
-        rank[ra] += 1
-    return True
+        print("MST edges:")
+        for u, v, w in chosen:
+            print(f"{u} -- {v}: {w}")
+        print("Total weight:", total)
 
-n = int(input("Number of vertices: "))
-names = input("Enter vertex names: ").split()
-graph = {name: [] for name in names}
-m = int(input("Number of edges: "))
-edges = []
+vertices = ["Gate", "Library", "Canteen", "Lab", "Hostel"]
+# Example path lengths/weights; edit to match your campus.
+edges = [
+    (4, "Gate", "Library"),
+    (2, "Gate", "Canteen"),
+    (5, "Library", "Canteen"),
+    (10, "Library", "Lab"),
+    (3, "Canteen", "Lab"),
+    (7, "Canteen", "Hostel"),
+    (6, "Lab", "Hostel"),
+]
 
-for _ in range(m):
-    u, v, w = input("Enter edge (u v weight): ").split()
-    w = int(w)
-    graph[u].append((v, w))
-    graph[v].append((u, w))
-    edges.append((w, u, v))
-
-parent = {name: name for name in names}
-rank = {name: 0 for name in names}
-total = 0
-selected = []
-
-for w, u, v in sorted(edges):
-    if union(parent, rank, u, v):
-        selected.append((u, v, w))
-        total += w
-
-if len(selected) != n - 1:
-    print("Graph is disconnected; no spanning tree exists.")
-else:
-    print("Selected MST edges:")
-    for u, v, w in selected:
-        print(u, "-", v, ":", w)
-    print("Total weight:", total)`
+kruskal(vertices, edges)`
   },
   {
     id: 14,
     questionNo: "Question 14",
-    fileName: "014_PrimMST.py",
-    title: "Prim's Minimum Spanning Tree",
-    topic: "Prim's MST (adjacency matrix)",
+    title: "Prim Minimum Spanning Tree using adjacency matrix (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(V^2)",
-    keyConcepts: "Greedy growth of tree, pick min crossing edge",
-    question: "Represent a graph of your college campus using adjacency matrix. Implement Prim's algorithm to find the Minimum Spanning Tree and calculate its total weight.",
-    code: `n = int(input("Number of vertices: "))
-print("Enter adjacency matrix (0 means no edge):")
-graph = [list(map(int, input().split())) for _ in range(n)]
+    fileName: "14_PrimMST.py",
+    question: "Find the Minimum Spanning Tree (MST) of a weighted graph using Prim's algorithm with an adjacency matrix representation.",
+    code: `import math
 
-selected = [False] * n
-selected[0] = True
-edges = []
-total = 0
+def prim(matrix, start=0):
+    n = len(matrix)
+    selected = [False] * n
+    key = [math.inf] * n
+    parent = [-1] * n
+    key[start] = 0
+    total = 0
 
-for _ in range(n - 1):
-    best = float("inf")
-    u = v = -1
-    for i in range(n):
-        if selected[i]:
-            for j in range(n):
-                if not selected[j] and graph[i][j] != 0 and graph[i][j] < best:
-                    best = graph[i][j]
-                    u, v = i, j
-    if v == -1:
-        print("Graph is disconnected; no spanning tree exists.")
-        break
-    selected[v] = True
-    edges.append((u, v, best))
-    total += best
-else:
-    print("Selected MST edges:")
-    for u, v, w in edges:
-        print(u, "-", v, ":", w)
-    print("Total weight:", total)`
+    for _ in range(n):
+        u = -1
+        for i in range(n):
+            if not selected[i] and (u == -1 or key[i] < key[u]):
+                u = i
+        if u == -1 or key[u] == math.inf:
+            print("Graph is disconnected; no spanning tree exists.")
+            return
+
+        selected[u] = True
+        total += key[u]
+
+        for v in range(n):
+            weight = matrix[u][v]
+            # 0 means no edge; use positive weights for this example.
+            if weight > 0 and not selected[v] and weight < key[v]:
+                key[v] = weight
+                parent[v] = u
+
+    print("MST edges:")
+    for v in range(n):
+        if parent[v] != -1:
+            print(f"{names[parent[v]]} -- {names[v]}: {matrix[parent[v]][v]}")
+    print("Total weight:", total)
+
+names = ["Gate", "Library", "Canteen", "Lab", "Hostel"]
+# Symmetric matrix; 0 means no direct edge.
+matrix = [
+    [0, 4, 2, 0, 0],
+    [4, 0, 5, 10, 0],
+    [2, 5, 0, 3, 7],
+    [0, 10, 3, 0, 6],
+    [0, 0, 7, 6, 0],
+]
+
+prim(matrix)`
   },
   {
     id: 15,
     questionNo: "Question 15",
-    fileName: "015_HeapSort.py",
-    title: "Heap Sort Algorithm",
-    topic: "Heap Sort",
+    title: "Heap Sort ascending (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(n log n)",
-    keyConcepts: "Build max-heap, heapify, in-place sort",
-    question: "Design and implement the Heap Sort algorithm to efficiently sort an array of integers in ascending order. The implementation should be optimized for time and space complexity and should clearly demonstrate the working principles of heap data structures.",
+    fileName: "15_HeapSort.py",
+    question: "Sort an array of integers in ascending order using Heap Sort by building a max-heap and iteratively extracting elements.",
     code: `def heapify(a, n, i):
     largest = i
     left = 2 * i + 1
@@ -810,27 +751,25 @@ else:
 
 def heap_sort(a):
     n = len(a)
+    # Build max heap in O(n)
     for i in range(n // 2 - 1, -1, -1):
         heapify(a, n, i)
-    for i in range(n - 1, 0, -1):
-        a[0], a[i] = a[i], a[0]
-        heapify(a, i, 0)
+    # Move maximum to the end, one by one
+    for end in range(n - 1, 0, -1):
+        a[0], a[end] = a[end], a[0]
+        heapify(a, end, 0)
+    return a
 
-a = list(map(int, input("Enter integers: ").split()))
-heap_sort(a)
-print("Sorted array:", *a)`
+arr = list(map(int, input("Enter integers separated by spaces: ").split()))
+print("Sorted:", *heap_sort(arr))`
   },
   {
     id: 16,
     questionNo: "Question 16",
-    fileName: "016_MergeSort.py",
-    title: "Merge Sort for Delivery Orders",
-    topic: "Merge Sort (delivery times)",
+    title: "Merge Sort delivery times (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(n log n)",
-    keyConcepts: "Divide and conquer, merge two sorted halves",
-    question: "You are given a list of online orders, each with an estimated delivery time in minutes. Write a program to sort these orders using the Merge Sort algorithm so the delivery system can prioritize quicker deliveries first.",
+    fileName: "16_MergeSort.py",
+    question: "Sort package delivery times in minutes in ascending order using Merge Sort (divide-and-conquer algorithm).",
     code: `def merge_sort(a):
     if len(a) <= 1:
         return a
@@ -841,177 +780,216 @@ print("Sorted array:", *a)`
     i = j = 0
     while i < len(left) and j < len(right):
         if left[i] <= right[j]:
-            result.append(left[i])
-            i += 1
+            result.append(left[i]); i += 1
         else:
-            result.append(right[j])
-            j += 1
+            result.append(right[j]); j += 1
     result.extend(left[i:])
     result.extend(right[j:])
     return result
 
-times = list(map(int, input("Enter delivery times in minutes: ").split()))
-print("Orders by quickest delivery:", *merge_sort(times))`
+times = list(map(int, input("Enter delivery times (minutes): ").split()))
+print("Quickest deliveries first:", *merge_sort(times))`
   },
   {
     id: 17,
     questionNo: "Question 17",
-    fileName: "017_FractionalKnapsack.py",
-    title: "Fractional Knapsack Strategy",
-    topic: "Fractional Knapsack",
+    title: "Fractional Knapsack (Python)",
     language: "python",
-    level: "Easy",
-    timeComplexity: "O(n log n)",
-    keyConcepts: "Greedy by profit/weight ratio",
-    question: "You run a shipping company and need to load a truck with parcels of different weights and profits. The truck has a limited weight capacity. Write a program to choose parcels (even partially) to maximize profit using the Fractional Knapsack strategy.",
-    code: `n = int(input("Number of parcels: "))
-parcels = []
+    fileName: "17_FractionalKnapsack.py",
+    question: "Solve the Fractional Knapsack problem using a greedy approach by sorting items by profit-to-weight ratio to maximize total profit within truck capacity.",
+    code: `def fractional_knapsack(items, capacity):
+    # Each item is (weight, profit). Fractions of items are allowed.
+    items = sorted(items, key=lambda item: item[1] / item[0], reverse=True)
+    total_profit = 0.0
+    chosen = []
+
+    for weight, profit in items:
+        if capacity <= 0:
+            break
+        take = min(weight, capacity)
+        fraction = take / weight
+        total_profit += profit * fraction
+        chosen.append((weight, profit, fraction, take))
+        capacity -= take
+
+    print("Selected items (weight, profit, fraction taken, weight loaded):")
+    for item in chosen:
+        print(item)
+    print(f"Maximum profit: {total_profit:.2f}")
+
+n = int(input("Number of parcels: "))
+items = []
 for i in range(n):
-    weight, profit = map(float, input("Enter weight and profit: ").split())
-    parcels.append((profit / weight, weight, profit))
+    weight, profit = map(float, input(f"Parcel {i+1} weight and profit: ").split())
+    if weight <= 0:
+        raise ValueError("Parcel weight must be positive.")
+    items.append((weight, profit))
 
 capacity = float(input("Truck capacity: "))
-parcels.sort(reverse=True)
-
-total_profit = 0
-for ratio, weight, profit in parcels:
-    if capacity <= 0:
-        break
-    take = min(weight, capacity)
-    total_profit += take * ratio
-    capacity -= take
-
-print("Maximum profit:", round(total_profit, 2))`
+fractional_knapsack(items, capacity)`
   },
   {
     id: 18,
     questionNo: "Question 18",
-    fileName: "018_NaiveString.py",
-    title: "Naive String Pattern Matching",
-    topic: "Naive String Matching",
+    title: "Naive String Matching (Python)",
     language: "python",
-    level: "Easy",
-    timeComplexity: "O(n * m)",
-    keyConcepts: "Slide pattern over text, compare substrings",
-    question: "A text string text of length n. A pattern string pattern of length m. Find all starting indices i in the text such that the substring text[i:i+m] is exactly equal to the pattern using the Naive String Matching Algorithm approach. Constraints: 0 <= m <= n.",
-    code: `text = input("Enter text: ")
-pattern = input("Enter pattern: ")
-n, m = len(text), len(pattern)
-matches = []
+    fileName: "18_NaiveStringMatching.py",
+    question: "Implement the Naive String Matching algorithm to find all starting indices of a pattern occurring in a text string.",
+    code: `def naive_search(text, pattern):
+    n, m = len(text), len(pattern)
+    if m == 0:
+        return list(range(n + 1)) # empty pattern matches at every boundary
+    matches = []
+    for i in range(n - m + 1):
+        j = 0
+        while j < m and text[i + j] == pattern[j]:
+            j += 1
+        if j == m:
+            matches.append(i)
+    return matches
 
-for i in range(n - m + 1):
-    if text[i:i+m] == pattern:
-        matches.append(i)
-
-print("Starting indices:", matches)`
+text = input("Text: ")
+pattern = input("Pattern: ")
+positions = naive_search(text, pattern)
+if positions:
+    print("Pattern found at starting indices:", *positions)
+else:
+    print("Pattern not found")`
   },
   {
     id: 19,
     questionNo: "Question 19",
-    fileName: "019_BFSShortestPath.py",
-    title: "Grid Shortest Path using BFS",
-    topic: "BFS shortest path in maze",
+    title: "BFS shortest path in a grid maze (Python)",
     language: "python",
-    level: "Medium",
-    timeComplexity: "O(rows * cols)",
-    keyConcepts: "Queue, parent map, path reconstruction",
-    question: "Represent a small maze as a two-dimensional grid containing free cells and obstacles. Use Breadth-First Search (BFS) to find the shortest path from a start cell to a goal cell. Display the path or report that no path exists.",
+    fileName: "19_BFSShortestPath.py",
+    question: "Find the shortest path from start to goal in a 2D grid maze with obstacles using Breadth-First Search (BFS) and reconstruct the path.",
     code: `from collections import deque
 
-maze = [
-    [0, 0, 0, 0],
-    [1, 1, 0, 1],
-    [0, 0, 0, 0],
-    [0, 1, 1, 0]
+def bfs(grid, start, goal):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque([start])
+    parent = {start: None}
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+    while queue:
+        r, c = queue.popleft()
+        if (r, c) == goal:
+            path = []
+            cur = goal
+            while cur is not None:
+                path.append(cur)
+                cur = parent[cur]
+            return path[::-1]
+
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            nxt = (nr, nc)
+            if (0 <= nr < rows and 0 <= nc < cols and
+                grid[nr][nc] != '#' and nxt not in parent):
+                parent[nxt] = (r, c)
+                queue.append(nxt)
+
+    return None
+
+grid = [
+    "....#.",
+    ".##...",
+    "...#..",
+    "#.....",
 ]
 
 start = (0, 0)
-goal = (3, 3)
-rows, cols = len(maze), len(maze[0])
-queue = deque([start])
-parent = {start: None}
-
-while queue:
-    r, c = queue.popleft()
-    if (r, c) == goal:
-        break
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        nr, nc = r + dr, c + dc
-        cell = (nr, nc)
-        if (0 <= nr < rows and 0 <= nc < cols and
-            maze[nr][nc] == 0 and cell not in parent):
-            parent[cell] = (r, c)
-            queue.append(cell)
-
-if goal not in parent:
+goal = (3, 5)
+path = bfs(grid, start, goal)
+if path is None:
     print("No path exists")
 else:
-    path = []
-    cell = goal
-    while cell is not None:
-        path.append(cell)
-        cell = parent[cell]
-    path.reverse()
     print("Shortest path:", path)
-    print("Path length (moves):", len(path) - 1)`
+    shown = [list(row) for row in grid]
+    for r, c in path:
+        if (r, c) not in (start, goal):
+            shown[r][c] = '*'
+    shown[start[0]][start[1]] = 'S'
+    shown[goal[0]][goal[1]] = 'G'
+    print("Maze (* = path):")
+    for row in shown:
+        print("".join(row))`
   },
   {
     id: 20,
     questionNo: "Question 20",
-    fileName: "020_AStarSearch.py",
-    title: "Grid Shortest Path using A* Search",
-    topic: "A* search in maze",
+    title: "A* search in a grid maze using Manhattan distance (Python)",
     language: "python",
-    level: "Hard",
-    timeComplexity: "worst case O(b^d)",
-    keyConcepts: "Priority queue, g+h cost, Manhattan heuristic",
-    question: "Implement A* search for a small grid maze using Manhattan distance as the heuristic. Display the path from start to goal.",
+    fileName: "20_AStarSearch.py",
+    question: "Find an optimal path in a grid maze with obstacles using the A* Search algorithm with Manhattan distance heuristic.",
     code: `import heapq
 
-maze = [
-    [0, 0, 0, 0],
-    [1, 1, 0, 1],
-    [0, 0, 0, 0],
-    [0, 1, 1, 0]
+def astar(grid, start, goal):
+    rows, cols = len(grid), len(grid[0])
+
+    def heuristic(cell):
+        return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
+
+    open_heap = [(heuristic(start), 0, start)]
+    parent = {start: None}
+    g_score = {start: 0}
+    closed = set()
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+    while open_heap:
+        f, g, current = heapq.heappop(open_heap)
+        if current in closed:
+            continue
+        if current == goal:
+            path = []
+            cur = goal
+            while cur is not None:
+                path.append(cur)
+                cur = parent[cur]
+            return path[::-1]
+
+        closed.add(current)
+        r, c = current
+
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            nxt = (nr, nc)
+            if not (0 <= nr < rows and 0 <= nc < cols):
+                continue
+            if grid[nr][nc] == '#':
+                continue
+
+            tentative_g = g_score[current] + 1
+            if tentative_g < g_score.get(nxt, float("inf")):
+                parent[nxt] = current
+                g_score[nxt] = tentative_g
+                heapq.heappush(open_heap, (tentative_g + heuristic(nxt),
+                                           tentative_g, nxt))
+                closed.discard(nxt)
+
+    return None
+
+grid = [
+    "....#.",
+    ".##...",
+    "...#..",
+    "#.....",
 ]
 
 start = (0, 0)
-goal = (3, 3)
-rows, cols = len(maze), len(maze[0])
-
-def heuristic(cell):
-    return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
-
-pq = [(heuristic(start), 0, start)]
-parent = {start: None}
-cost = {start: 0}
-
-while pq:
-    _, g, current = heapq.heappop(pq)
-    if g != cost[current]:
-        continue
-    if current == goal:
-        break
-    r, c = current
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        nr, nc = r + dr, c + dc
-        nxt = (nr, nc)
-        if (0 <= nr < rows and 0 <= nc < cols and maze[nr][nc] == 0):
-            new_cost = g + 1
-            if new_cost < cost.get(nxt, float("inf")):
-                cost[nxt] = new_cost
-                parent[nxt] = current
-                heapq.heappush(pq, (new_cost + heuristic(nxt), new_cost, nxt))
-
-if goal not in parent:
+goal = (3, 5)
+path = astar(grid, start, goal)
+if path is None:
     print("No path exists")
 else:
-    path = []
-    cell = goal
-    while cell is not None:
-        path.append(cell)
-        cell = parent[cell]
-    path.reverse()
-    print("Path from start to goal:", path)`
+    print("A* path:", path)
+    shown = [list(row) for row in grid]
+    for r, c in path:
+        if (r, c) not in (start, goal):
+            shown[r][c] = '*'
+    shown[start[0]][start[1]] = 'S'
+    shown[goal[0]][goal[1]] = 'G'
+    for row in shown:
+        print("".join(row))`
   }
 ];

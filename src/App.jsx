@@ -96,7 +96,10 @@ const isOnline = useOnlineStatus();
     const q = searchQuery.toLowerCase().trim();
     return assignments.filter((item) => {
       const matchCategory =
-        selectedCategory === 'All' || item.topic === selectedCategory;
+        selectedCategory === 'All' ||
+        (selectedCategory === 'Part A (C++)' && item.language === 'cpp') ||
+        (selectedCategory === 'Part B (Python)' && item.language === 'python') ||
+        (item.topic && item.topic === selectedCategory);
       const matchLanguage =
         selectedLanguage === 'all' || item.language === selectedLanguage;
 
@@ -104,11 +107,13 @@ const isOnline = useOnlineStatus();
       if (!q) return true;
 
       return (
-        item.title.toLowerCase().includes(q) ||
-        item.topic.toLowerCase().includes(q) ||
-        item.question.toLowerCase().includes(q) ||
-        item.code.toLowerCase().includes(q) ||
-        item.language.toLowerCase().includes(q)
+        item.title?.toLowerCase().includes(q) ||
+        item.fileName?.toLowerCase().includes(q) ||
+        item.questionNo?.toLowerCase().includes(q) ||
+        (item.topic && item.topic.toLowerCase().includes(q)) ||
+        item.question?.toLowerCase().includes(q) ||
+        item.code?.toLowerCase().includes(q) ||
+        item.language?.toLowerCase().includes(q)
       );
     });
   }, [searchQuery, selectedCategory, selectedLanguage]);

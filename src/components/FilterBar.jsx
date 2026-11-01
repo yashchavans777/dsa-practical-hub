@@ -28,6 +28,8 @@ export default function FilterBar({
 
   const getCategoryCount = (category) => {
     if (category === 'All') return assignments.length;
+    if (category === 'Part A (C++)') return assignments.filter((a) => a.language === 'cpp').length;
+    if (category === 'Part B (Python)') return assignments.filter((a) => a.language === 'python').length;
     return assignments.filter((a) => a.topic === category).length;
   };
 

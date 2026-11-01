@@ -21,7 +21,12 @@ export default function AssignmentModal({
   hasPrev,
   hasNext
 }) {
-  const [activeTab, setActiveTab] = useState('split'); // 'split' | 'code' | 'output'
+  const [activeTab, setActiveTab] = useState(() => (assignment?.output ? 'split' : 'code')); // 'split' | 'code' | 'output'
+
+  // Reset tab when assignment changes
+  useEffect(() => {
+    setActiveTab(assignment?.output ? 'split' : 'code');
+  }, [assignment?.id]);
 
   // Keyboard navigation: Escape to close, Left/Right arrows for prev/next
   useEffect(() => {
@@ -62,8 +67,8 @@ export default function AssignmentModal({
             <span className="font-mono text-xs font-bold text-slate-400 dark:text-slate-500">
               #{assignment.id.toString().padStart(2, '0')}
             </span>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-              {assignment.topic}
+            <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              {assignment.fileName || assignment.topic}
             </span>
             <span
               className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full uppercase ${

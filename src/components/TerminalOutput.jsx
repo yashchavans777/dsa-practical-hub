@@ -24,7 +24,7 @@ export default function TerminalOutput({ output, title }) {
         </div>
 
         <div>
-          <CopyButton text={output} label="Copy Output" size="sm" />
+          <CopyButton text={output || ''} label="Copy Output" size="sm" />
         </div>
       </div>
 
@@ -32,10 +32,10 @@ export default function TerminalOutput({ output, title }) {
       <div className="p-4 overflow-x-auto bg-[#090d14] font-mono text-xs md:text-sm text-slate-200 leading-relaxed scrollbar-thin">
         <div className="flex items-center space-x-2 text-slate-500 text-xs mb-3 select-none border-b border-slate-800/40 pb-2">
           <CornerDownLeft className="w-3.5 h-3.5 text-emerald-500" />
-          <span>Execution Output (Simulated Exit Code 0)</span>
+          <span>Execution Output (Console Session)</span>
         </div>
         <pre className="whitespace-pre font-mono text-emerald-300/90 selection:bg-emerald-800 selection:text-white">
-          {output}
+          {output || '// Run this program in your C++ or Python environment to view interactive console output.'}
         </pre>
       </div>
     </div>
